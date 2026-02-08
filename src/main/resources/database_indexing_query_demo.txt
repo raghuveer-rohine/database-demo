@@ -1,0 +1,57 @@
+USE demo;
+
+DROP TABLE IF EXISTS students;
+
+CREATE TABLE students (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    age INT,
+    city VARCHAR(100),
+    grade INT,
+    enrollment_date DATE
+);
+
+DROP PROCEDURE IF EXISTS insert_students;
+DELIMITER $$
+
+CREATE PROCEDURE insert_students()
+BEGIN
+    DECLARE i INT DEFAULT 1;
+
+    WHILE i <= 1000 DO
+        INSERT INTO students (name, age, city, grade, enrollment_date)
+        VALUES (
+            CONCAT('Student_', i),
+            FLOOR(10 + RAND() * 10),
+            ELT(
+                FLOOR(1 + (RAND() * 5)),
+                'Delhi', 'Mumbai', 'Chennai', 'Kolkata', 'Bangalore'
+            ),
+            FLOOR(40 + RAND() * 60),
+            DATE_ADD('2020-01-01', INTERVAL FLOOR(RAND() * 1000) DAY)
+        );
+
+        SET i = i + 1;
+    END WHILE;
+END$$
+
+DELIMITER ;
+
+CALL insert_students();
+
+SELECT * FROM students;
+
+EXPLAIN ANALYZE
+SELECT *
+FROM students
+WHERE city = 'Delhi'
+  AND grade > 80;
+
+CREATE INDEX idx_city_grade
+ON students(city, grade);
+
+EXPLAIN ANALYZE
+SELECT *
+FROM students
+WHERE city = 'Delhi'
+  AND grade > 80;
