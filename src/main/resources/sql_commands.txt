@@ -1,0 +1,27 @@
+create database demo;
+use demo;
+
+drop table my_table;
+CREATE TABLE my_table (
+    id INT PRIMARY KEY,
+    count INT
+);
+
+
+INSERT INTO my_table (id, count)
+SELECT n, 0
+FROM (
+    SELECT a.N + b.N * 10 + 1 AS n
+    FROM (SELECT 0 AS N UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+          UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) a,
+         (SELECT 0 AS N UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+          UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) b
+    ORDER BY n
+) numbers
+WHERE n <= 50;
+
+select * from my_table;
+
+SHOW VARIABLES LIKE 'max_connections';
+SHOW STATUS LIKE 'Threads_connected';
+show processlist;
